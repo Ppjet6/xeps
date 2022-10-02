@@ -152,6 +152,7 @@
       <p>Permissions are handled as with affiliation iq queries in &xep0045;, the same rules should be applied by the server when deciding who can use this protocol.</p>
       <p>Some notes regarding permissions can be find in &xep0045;, for example in <link url='https://xmpp.org/extensions/xep-0045.html#affil-priv'>Affiliations</link>, or <link url="https://xmpp.org/extensions/xep-0045.html#modifymember">Modifying the member list</link>.</p>
       <p>An <tt>auth forbidden</tt> error MUST be returned in a <tt>&MESSAGE;</tt> stanza if an observer doesn't have the necessary permissions to request affiliations.</p>
+      <p>This error can only be raised in response to a join presence, that is, before any presence broadcast to the new session.</p>
 
       <example caption="This observer isn't allowed to query affiliations in the room"><![CDATA[
 <message from='news@chat.commons.example'
