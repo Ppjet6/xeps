@@ -97,7 +97,7 @@
       <p>The <tt>since</tt> attribute is used to reflect the version sent by the client and is the starting point of the diff that will be computed. The <tt>until</tt> attribute is the latest version the server has. When these attributes are present they MUST contain a valid version string (unique and opaque).</p>
       <p>The reponse MUST be sent during the join process before any <tt>&PRESENCE;</tt> is sent to the joining user.</p>
       <p>If a client sends a version that the server doesn't know, (e.g., because it only stores the last N versions, or the client made a mistake), the response MUST be a full response, with the <tt>since</tt> attribute not present, and the <tt>until</tt> attribute filled with the latest version.</p>
-      <p>If both attributes have the same value, meaning a client already has the latest version, the x element MUST be empty, only containing the two filled attributes.</p>
+      <p>When a client already has the latest available version, the server MUST return an x element only containing the two attributes filled with the same value.</p>
       <p>There can be no empty diff but there can be empty full reponses (no affiliations).</p>
 
       <example caption="Room full response for a version that it didn't know."><![CDATA[
@@ -183,7 +183,7 @@
 
 <section1 topic='Design Considerations' anchor='design'>
   <p>This specification is based on the design of roster versioning, with the difference of since and until attributes, to ensure clients stay in sync because unlike roster versioning this may be running over c2s, <strong>and</strong> s2s which may break.</p>
-  <p>The <tt>&lt;x xmlns='http://jabber.org/protocol/muc[#user]/&gt;</tt> elements are not defined extensible in the &xep0045; specification, but as this is a negociated change there shouldn't be any issue.</p>
+  <p>The <tt>&lt;x xmlns='http://jabber.org/protocol/muc[#user]' /&gt;</tt> elements are not defined extensible in the &xep0045; specification, but as this is a negociated change there shouldn't be any issue.</p>
   <p><strong>TODO? RSM.</strong> Pagination may have been useful for large rooms, when receiving a full response. Versioning will reduce the amount of bandwidth used for further queries though.</p>
 </section1>
 <section1 topic='XML Schema' anchor='schema'>
