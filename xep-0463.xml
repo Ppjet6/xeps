@@ -169,6 +169,7 @@
   <p>An observer has to join the MUC room to use the protocol as the <tt>since</tt> element must be included in the join presence. This makes this specification less prone to vulnerabilities that may have happened with protocols such as MAM in the past (i.e., scraping information without being joined).</p>
   <p>A server should be careful not to disclose past affiliation states. If an observer requests a version of which they weren't a part of, a server MUST return an error as specified in <link url='#errors'>Error Cases</link>.</p>
   <p>When caching server responses, a client should make sure to associate the received version string to the room JID and not have a global cache for affiliation versions to prevent any cache poisoning issues.</p>
+  <p>As mentioned in <link url="#request">Client Request</link>, the since attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about an occupant to other participants, even though this information is not intended for them.</p>
 </section1>
 
 <section1 topic='IANA Considerations' anchor='iana'>
