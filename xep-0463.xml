@@ -41,9 +41,9 @@
 </header>
 
 <section1 topic='Introduction' anchor='intro'>
-  <p>Affiliations are a way in &xep0045; to handle permissions (ownership, membership, etc.). Currently, an observer gets the data in presence of online participants at the time of join, of new participants when they join, or when affiliation is changed. This observer has to send in one query per category (owner, admin, member, outcast) if they want to get a full view.</p>
-  <p>Caching this data can be tricky, as any member removed when the observer is offline is not likely to be caught until the 4 queries are run again. Having multiple queries can also produce race conditions where an occupant is moved out of a group (e.g., owners) to another group (e.g., members) while an observer queries, and they end up not seeing this occupant at all, or twice, or not in the correct group.</p>
-  <p>Affiliations have become more and more used lately, for example in so-called private groupchats, that is, a non-public, non-anonymous (visible JIDs), members-only room. Having to run all queries is particularly annoying in these private rooms where some implementations prefer to display all participants instead of online participants only, and where the affiliations list is used to know whom to encrypt to in an e2ee context.</p>
+  <p>Affiliations are a way in &xep0045; to handle permissions (ownership, membership, etc.). Currently, an observer gets the data in the presence of online participants at the time of join, of new participants when they join, or when affiliation is changed. This observer has to send in one query per category (owner, admin, member, outcast) if they want to get a full view.</p>
+  <p>Caching this data can be tricky, as any member removed when the observer is offline is not likely to be caught until the 4 queries are run again. Having multiple queries instead of a single one can also produce race conditions where an occupant is moved out of a group (e.g., owners) to another group (e.g., members) while an observer queries, and they end up not seeing this occupant at all, or twice, or not in the correct group.</p>
+  <p>Affiliations have become more and more used lately, for example in so-called private groupchats, that is, a non-public, non-anonymous (visible JIDs), members-only room. Having to run all queries is particularly annoying in these private rooms where some implementations prefer to display all participants instead of online participants only, and where the affiliation list is used to know whom to encrypt to in an e2ee context.</p>
   <p>This specification sets a versioning mechanism in place, allowing an observer in a room to get the latest changes from a known version, and to reduce the amount of round-trips to handle affiliations.</p>
 </section1>
 
@@ -75,7 +75,7 @@
   <section2 topic='Client request' anchor='request'>
     <p>When sending a join presence to a &xep0045; room, a client may include a <tt>since</tt> attribute in the <tt>&mav0;</tt> namespace on the <tt>&lt;x xmlns='&muc;'&gt;</tt> element. This attribute, a unique and opaque string, indicates the last affiliation version sent by the server that the client has seen, and cached. Sending an empty <tt>since</tt> attribute is a called bootstrap request, which asks the server for a full response.</p>
 
-    <p>This <tt>since</tt> attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about an occupant to other participants, even though this information is not intended for them.</p>
+    <p>This <tt>since</tt> attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about a participant to other participants, even though this information is not intended for them.</p>
 
     <example caption='Bootstrap request to get the full list.'><![CDATA[
 <presence to='news@chat.commons.example' from='louise@commons.example/desktop'>
@@ -93,9 +93,9 @@
 
   <section2 topic='Server Response' anchor='response'>
     <section3 topic='On Join' anchor='self'>
-      <p>Returning the list of affiliation changes is done as a <tt>&MESSAGE;</tt> stanza inside the <tt>&lt;x xmlns='&muc-user;'&gt;</tt> element to which <tt>since</tt> and/or <tt>until</tt> attributes of namespace <tt>&mav0;</tt> MAY be added. Each affiliation is to be sent as an <tt>&lt;item&gt;</tt> element in the same namespace as its x parent, and MUST at least contain a <tt>jid</tt> attribute and an <tt>affiliation</tt> attribute, similarly to what is specified in <link url='https://xmpp.org/extensions/xep-0045.html#affil'>MUC Affiliations</link>.</p>
+      <p>Returning the list of affiliation changes is done as a <tt>&MESSAGE;</tt> stanza inside the <tt>&lt;x xmlns='&muc-user;'&gt;</tt> element to which <tt>since</tt> and/or <tt>until</tt> attributes of namespace <tt>&mav0;</tt> MAY be added. Each affiliation is to be sent as an <tt>&lt;item&gt;</tt> element in the same namespace as its x parent, and MUST at least contain a <tt>jid</tt> and an <tt>affiliation</tt> attributes, similarly to what is specified in <link url='https://xmpp.org/extensions/xep-0045.html#affil'>MUC Affiliations</link>.</p>
       <p>The <tt>since</tt> attribute is used to reflect the version sent by the client and is the starting point of the diff that will be computed. The <tt>until</tt> attribute is the latest version the server has. When these attributes are present they MUST contain a valid version string (unique and opaque).</p>
-      <p>The reponse MUST be sent during the join process before any <tt>&PRESENCE;</tt> is sent to the joining user.</p>
+      <p>The reponse MUST be sent during the join process before any <tt>&PRESENCE;</tt> is sent to the joining session.</p>
       <p>If a client sends a version that the server doesn't know, (e.g., because it only stores the last N versions, or the client made a mistake), the response MUST be a full response, with the <tt>since</tt> attribute not present, and the <tt>until</tt> attribute filled with the latest version.</p>
       <p>When a client already has the latest available version, the server MUST return an x element only containing the two attributes filled with the same value.</p>
       <p>There can be no empty diff but there can be empty full reponses (no affiliations).</p>
@@ -167,10 +167,10 @@
 </section1>
 
 <section1 topic='Security Considerations' anchor='security'>
-  <p>An observer has to join the MUC room to use the protocol as the <tt>since</tt> element must be included in the join presence. This makes this specification less prone to vulnerabilities that may have happened with protocols such as MAM in the past (i.e., scraping information without being joined).</p>
+  <p>An observer has to join the MUC room to use the protocol as the <tt>since</tt> attribute is to be included in the join presence. This makes this specification less prone to vulnerabilities that may have happened with protocols such as MAM in the past (i.e., scraping information without being joined).</p>
   <p>A server should be careful not to disclose past affiliation states. If an observer requests a version of which they weren't a part of, a server MUST return an error as specified in <link url='#errors'>Error Cases</link>.</p>
   <p>When caching server responses, a client should make sure to associate the received version string to the room JID and not have a global cache for affiliation versions to prevent any cache poisoning issues.</p>
-  <p>As mentioned in <link url="#request">Client Request</link>, the since attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about an occupant to other participants, even though this information is not intended for them.</p>
+  <p>As mentioned in <link url="#request">Client Request</link>, the since attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about a participant to other participants, even though this information is not intended for them.</p>
 </section1>
 
 <section1 topic='IANA Considerations' anchor='iana'>
