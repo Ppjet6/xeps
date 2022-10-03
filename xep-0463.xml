@@ -51,6 +51,7 @@
   <ul>
     <li>Reduce the number of round-trips necessary to get the list of affiliations.</li>
     <li>Allow an implementation to request a diff of affiliations since a known version.</li>
+    <li><strong>TODO:</strong> Specify anything regarding partial access to affiliations? This would mostly be an issue in non-member-only rooms.</li>
   </ul>
 </section1>
 
@@ -98,7 +99,6 @@
       <p>The reponse MUST be sent during the join process before any <tt>&PRESENCE;</tt> is sent to the joining session.</p>
       <p>If a client sends a version that the server doesn't know, (e.g., because it only stores the last N versions, or the client made a mistake), the response MUST be a full response, with the <tt>since</tt> attribute not present, and the <tt>until</tt> attribute filled with the latest version.</p>
       <p>When a client already has the latest available version, the server MUST return an x element only containing the two attributes filled with the same value.</p>
-      <p>There can be no empty diff but there can be empty full reponses (no affiliations).</p>
 
       <example caption="Room full response for a version that it didn't know."><![CDATA[
 <message from='news@chat.commons.example'
@@ -121,13 +121,6 @@
     <item jid='vladimir@commons.example' affiliation='none' />
     <item jid='rosa@commons.example' affiliation='owner' />
   </x>
-</message>]]></example>
-      <example caption='Room full response with no affiliation'><![CDATA[
-<message from='news@chat.commons.example'
-         to='louise@commons.example/desktop'>
-  <x xmlns=']]>&muc-user;<![CDATA['
-     xmlns:mav=']]>&mav0;<![CDATA['
-     mav:until='ruz41312vw'/>
 </message>]]></example>
     </section3>
 
