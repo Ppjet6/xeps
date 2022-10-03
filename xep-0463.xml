@@ -51,7 +51,6 @@
   <ul>
     <li>Reduce the number of round-trips necessary to get the list of affiliations.</li>
     <li>Allow an implementation to request a diff of affiliations since a known version.</li>
-    <li><strong>TODO:</strong> Specify anything regarding partial access to affiliations? This would mostly be an issue in non-member-only rooms.</li>
   </ul>
 </section1>
 
@@ -166,6 +165,24 @@
   <p>As mentioned in <link url="#request">Client Request</link>, the since attribute MUST NOT be broadcasted by the server to other participants. A room not stripping the attribute may disclose information about a participant to other participants, even though this information is not intended for them.</p>
 </section1>
 
+<section1 topic='Unresolved TODOs' anchor='todo'>
+  <section2 topic='Partial access to affiliations' anchor='todo-partial'>
+    <p>It happens that participants don't have access to all affiliations, depending on their own affiliation and the room configuration.</p>
+    <p>In this spec, there aren't 4 queries that can separately fail anymore. A client wouldn't be able to know to what exactly they do not have access unless they issue iqs themselves, which defeats the point. Is this someting we want to help with? Should we include something to tell the client it's a partial result, and possibly what they have or don't have access to?</p>
+    <p>Or should we just leave it be, and return the auth/forbidden error when they don't have access, and whatever there is to return when they do have access.</p>
+    </section2>
+  <section2 topic='Should an error prevent a join' anchor='todo-error'>
+    <p>Should the room prevent the join from happening if an error occurs?</p>
+    <p>It doesn't look necessary? Seeing the error, a client would know they have made a mistake, and can certainly associate it with this feature as it's unlikely another message error from the MUC arrives at this exact moment. They would get no affiliations anyway. The join should probably just go on.</p>
+    </section2>
+  <section2 topic='RSM' anchor='todo-rsm'>
+    <p>Pagination may have been useful for large rooms, when receiving a full response. Versioning will reduce the amount of bandwidth used for further queries though.</p>
+  </section2>
+  <section2 topic="Namespace'd attribute schema" anchor='todo-schema'>
+    <p>How does one schematize standalone attributes?</p>
+  </section2>
+</section1>
+
 <section1 topic='IANA Considerations' anchor='iana'>
   <p>This document requires no interaction with the &IANA;.</p>
 </section1>
@@ -177,7 +194,6 @@
 <section1 topic='Design Considerations' anchor='design'>
   <p>This specification is based on the design of roster versioning, with the difference of since and until attributes, to ensure clients stay in sync because unlike roster versioning this may be running over c2s, <strong>and</strong> s2s which may break.</p>
   <p>The <tt>&lt;x xmlns='http://jabber.org/protocol/muc[#user]' /&gt;</tt> elements are not defined extensible in the &xep0045; specification, but as this is a negociated change there shouldn't be any issue.</p>
-  <p><strong>TODO? RSM.</strong> Pagination may have been useful for large rooms, when receiving a full response. Versioning will reduce the amount of bandwidth used for further queries though.</p>
 </section1>
 <section1 topic='XML Schema' anchor='schema'>
   <code><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
@@ -195,7 +211,7 @@
     </xs:documentation>
   </xs:annotations>
 
-  <!-- TODO: How do I schematize standalone attributes? -->
+  <!-- TODO: How does one schematize standalone attributes? -->
   </xs:element>
 </xs:schema>]]></code>
 </section1>
