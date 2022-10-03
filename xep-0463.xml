@@ -27,6 +27,17 @@
   &pep.;
   &larma;
   <revision>
+    <version>0.1.1</version>
+    <date>2022-10-03</date>
+    <initials>pep</initials>
+    <remark><ul>
+      <li>Clarify when an error is to be sent.</li>
+      <li>Remove mention of empty full response at it's invalid.</li>
+      <li>Add Unresolved TODOs section.</li>
+      <li>Typos.</li>
+    </ul></remark>
+  </revision>
+  <revision>
     <version>0.1.0</version>
     <date>2022-03-08</date>
     <initials>XEP Editor (jsc)</initials>
