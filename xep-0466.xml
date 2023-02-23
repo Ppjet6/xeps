@@ -27,6 +27,16 @@
   <shortname>NOT_YET_ASSIGNED</shortname>
   &pep.;
   <revision>
+    <version>0.2.0</version>
+    <date>2023-02-23</date>
+    <initials>pep</initials>
+    <remark>
+      <ul>
+        <li><p>Use a namespace instead of an element for disco.</p></li>
+      </ul>
+    </remark>
+  </revision>
+  <revision>
     <version>0.1.0</version>
     <date>2022-05-17</date>
     <initials>XEP Editor (jsc)</initials>
@@ -79,7 +89,7 @@
 <section1 anchor="usecases" topic="Use Cases">
 <section2 anchor="disco" topic="Advertising support">
 
-<p>A client implementing this specification MUST advertise the <tt>&EPHEMERAL;</tt> disco feature (as per &xep0030;). When advertising the feature, a client will honor requests to discard messages after the agreed upon delay.</p>
+<p>A client implementing this specification MUST advertise the <tt>&eph0;</tt> disco feature (as per &xep0030;). When advertising the feature, a client will honor requests to discard messages after the agreed upon delay.</p>
 
 </section2>
 
