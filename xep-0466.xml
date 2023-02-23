@@ -32,7 +32,8 @@
     <initials>pep</initials>
     <remark>
       <ul>
-        <li><p>Use a namespace instead of an element for disco.</p></li>
+        <li><p>Use a namespace instead of an element for disco</p></li>
+        <li><p>Typos and various fixes in introduction.</p></li>
       </ul>
     </remark>
   </revision>
@@ -58,15 +59,15 @@
 
 <section1 anchor="intro" topic="Introduction">
 
-<p>Existing protocols deployed in XMPP networks offer forward secrecy both on the transport (TLS) and message (&xep0384;) levels. Forward secrecy prevents recorded communications from being decrypted even if long term encryption keys are compromised by generating ephemeral keys and securely deleting them when they are no longer needed.</p>
+<p>Existing protocols deployed in XMPP networks offer forward secrecy both on the transport (TLS) and message (e.g., &xep0373;, &xep0384;) levels. Forward secrecy in OMEMO prevents recorded communications from being decrypted even if long term encryption keys are compromised by generating ephemeral keys and securely deleting them when they are no longer needed.</p>
 
-<p>However, even though keys are deleted, message contents is retained client archives. While servers generally impose time limits on archives (messages, stored files, etc.), due to privacy laws (e.g., GDPR) and/or disk-space concerns, most XMPP clients still retain message content almost indefinitely even though it may not benefit a majority of their userbase. A device with an installed XMPP client that can be lost or stolen becomes the weakest link.</p>
+<p>However, even though keys are deleted, message contents is retained in client archives. While servers generally impose time limits on archives (messages, stored files, etc.), due to privacy laws (e.g., GDPR) and/or disk-space concerns, most XMPP clients still retain message contents almost indefinitely even though it may not benefit a majority of their userbase. A device with an installed XMPP client that can be lost or stolen becomes the weakest link.</p>
 
-<p>Unlike ephemeral keys, which have specified lifetimes, message contents cannot be removed immediately after being read. Users have to decide for how long they want to retain conversation contents. Verbally agreeing on the time interval and manually removing messages from all devices is cumbersome and error-prone.</p>
+<p>Unlike ephemeral keys, which have specified lifetimes, there is no way currently to remove message contents immediately after being read. Users have to decide for how long they want to retain conversation contents in their clients. Verbally agreeing on the time interval and manually removing messages from all devices is cumbersome and error-prone.</p>
 
 <p>This XEP defines a way to attach a timer value to messages which in order to specify for how long XMPP clients should store message contents. Besides that, it defines a way to synchronize common timer setting across all users of the conversation.</p>
 
-<p>The specification does not depend on any encryption scheme and does not require encryption at all. Plaintext messages will still be readable by servers in between and will depend on trust placed on these server to apply their privacy policy or to respect a &xep0334; store hint.</p>
+<p>The specification does not depend on any end-to-end encryption scheme and does not require encryption at all, nor does it prevent its use. Plaintext messages will still be readable by servers in between and will depend on trust placed on these server to apply their privacy policy and/or to respect a &xep0334; store hint.</p>
 
 <p>Other IM systems, such as <link url="https://signal.org/">Signal</link>, <link url="https://wickr.com/">Wickr</link>, <link url="https://wire.com/">Wire</link> and <link url="https://telegram.org/">Telegram</link>, already offer ephemeral messages. Signal offers timer synchronization feature for user groups and Telegram offers it for secret chats, which are limited to two users.</p>
 
