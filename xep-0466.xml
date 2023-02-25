@@ -35,7 +35,7 @@
       <ul>
         <li><p>Change opt-out element name.</p></li>
         <li><p>Use a namespace instead of an element for disco</p></li>
-        <li><p>Typos and various fixes in introduction.</p></li>
+        <li><p>Typos and various fixes.</p></li>
       </ul>
     </remark>
   </revision>
@@ -98,7 +98,7 @@
 
 <section2 anchor="sending" topic="Sending an ephemeral message">
 
-<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHSTART;</tt> tag in the <tt>&eph0;</tt> namespace, with an attribute <tt>timer</tt> (xs:unsignedInt) indicating the delay in seconds, after which a message MUST be discarded.</p>
+<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHSTART;</tt> tag in the <tt>&eph0;</tt> namespace, with a <tt>timer</tt> attribute indicating the delay in seconds (xs:unsignedInt), after which a message MUST be discarded.</p>
 
 <p>Ephemeral messages SHOULD be sent as usual on the bare JID of the contact, or as is specified for groupchats (e.g., MUC, MIX). If this includes sending to non-supporting clients, and they can be detected, sending clients SHOULD warn the user in some way. Clients MAY warn users anyway if non-supporting clients cannot be detected (e.g., when they don’t get a directed presence).</p>
 
@@ -107,7 +107,7 @@
 </section2>
 <section2 anchor="negotiation" topic="Negotiating a delay">
 
-<p>Sending a message with an ephemeral tag is how a delay is negotiated in a chat. A client receiving a message with an ephemeral tag MUST honor the timer for the received messages, and SHOULD include it in turn in following messages.</p>
+<p>Sending a message with an ephemeral tag is how a delay is negotiated in-band. A client receiving a message with an ephemeral tag MUST honor the timer for the received messages, and SHOULD include it in turn in following messages.</p>
 
 <p>To change the timer for the following messages, change the value when sending a new message.</p>
 
@@ -115,12 +115,12 @@
 
 <section2 anchor="implicit-negotiation" topic="Implicit timer negociation">
 
-<p>A implicit negociation can be done by sending a message with no <tt>&BODY;</tt>, that contains an <tt>&EPHSTART;</tt> tag and a timer attribute, specified in <link url='#sending'>Sending an ephemeral message</link>. The message MUST also contain a <tt>&lt;store&gt;</tt> hint as described in &xep0334; so that offline clients see it.</p>
+<p>An implicit negociation can be done by sending a message with no <tt>&BODY;</tt>, that contains an <tt>&EPHSTART;</tt> tag and a <tt>timer</tt> attribute, specified in <link url='#sending'>Sending an ephemeral message</link>. The message MUST also contain a <tt>&lt;store&gt;</tt> hint as described in &xep0334; so that offline clients see it.</p>
 
 </section2>
 <section2 anchor="opt-out" topic="Opting-out of ephemeral messages">
 
-<p><strong>XXX</strong>: Help. How do I ensure the receiving client sees what I am going to send, if it’s just a single message. Same issue as with negotiating the delay. (That is, if a client doesn’t fetch all MAM, it may miss the message). Do I need to send <tt>&EPHEND;</tt> forever?</p>
+<p><strong>XXX</strong>: Help. How do I ensure the receiving client sees what I am going to send, if it’s just a single message. Same issue as with negotiating the delay. (That is, if a client doesn’t fetch all MAM, it may miss the message). Do I need to send &lt;end/&gt; forever?</p>
 
 <p>A client that has previously been sending ephemeral messages can choose to stop sending them, and send regular messages instead, in which case it should tell the recipient:</p>
 
@@ -171,11 +171,11 @@
 </section1>
 <section1 anchor="rules" topic="Business Rules">
 
-<p>Timers SHOULD be started once a user has seen/read a message, to give them the possibility to read it – in case the timer was too low, and/or they were taking a holiday from messaging. <strong>XXX</strong>: Is "read" and/or "seen" defined anywhere? Should we settle on some definition?</p>
+<p>Timers SHOULD be started once a user has seen/read a message, to give them the possibility to read it – in case the timer was too low, and/or they were taking a holiday from messaging. <strong>XXX</strong>: Is “read” and/or “seen” defined anywhere? Should we settle on some definition?</p>
 
 <p>Once it has been sent, the timer on a message cannot be changed.</p>
 
-<p>Discarded messages SHOULD be noted as such in the client (e.g., "This message has disappeared"). Not just removed with no indication of the reason.</p>
+<p>Discarded messages SHOULD be noted as such in the client (e.g., “This message has disappeared”). Not just removed with no indication of the reason.</p>
 
 <p>When using with encryption mechanisms that include an encrypted wrapper such as &xep0373; or &xep0420;, this element SHOULD be placed in the wrapper.</p>
 
@@ -200,13 +200,13 @@
 <p>The message that appears once a message is discarded is a suggestion and should be adapted to the environment locale of the user.</p>
 
 </section1>
-<section1 anchor="security" topic="Security Considerations">
+<section1 anchor="privacy-security" topic="Privacy &amp; Security Considerations">
 
-<p>Ephemeral messages are not to be considered "secure" in any way.</p>
+<p>Ephemeral messages are not to be considered “secure” in any way.</p>
 
 <p>Even within well-meaning entities, requiring that messages be discarded and made impossible to retrieve, requires a lot more scrutiny in the specification and in implementations, and even then, is a really technically challenging task, to say the least.</p>
 
-<p>In an adversarial context, requiring that sent messages be deleted from every devices receiving it (thus including to an attacker), requires a lot more control over the infrastructure in place and is not in scope for this specification. The author of this specification has no intention to specify DRM.</p>
+<p>In an adversarial context, requiring that sent messages be deleted from every devices receiving them (thus including to an attacker), requires a lot more control over the infrastructure in place and is not in scope for this specification. The author of this specification has no intention to specify DRM.</p>
 
 <p>This specification doesn't prevent an attacker to read messages sent to you after they get control of your device (e.g., stolen, confiscated). In this specific case, the situation is improved nonetheless as the spec helps reduce the overall amount of messages that stay on a given device, compared to the current community standards.</p>
 
@@ -230,7 +230,7 @@
 
 <p>Another use-case mentioned (and alluded to in security considerations) was being able to send time-sensitive messages, or rather, messages that have no purpose after a given time and thus should disappear. This specification doesn’t exactly answer it as it might have been necessary to start the timer at the exact same time on both sender and receiver, and as such, a timestamp would have been better. This behaviour can still be observed more or less if sender and receiver are active at the same time, but of course it will differ when the receiver comes back at a later time.</p>
 
-<p>A minimal timer value was originally negociable, but was removed as it complicates the protocol substancially, and can directly be solved between users.</p>
+<p>A minimal timer value was originally negociable, but was removed as it complicates the protocol and can directly be solved between users.</p>
 
 <p><strong>XXX</strong>: Do we want to use a per-“contact” model? How? With PEP? How would a client know which node to pick (of the two in a 1:1 chat, easier in MUC). What to do about the access model? This should also not be limited to contacts but whitelist may be annoying to manage. IQ negociation? This requires simultanous online-ness and also not likely with non-contacts as it would require directed presence.</p>
 
