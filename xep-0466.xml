@@ -35,6 +35,7 @@
       <ul>
         <li><p>Change opt-out element name.</p></li>
         <li><p>Use a namespace instead of an element for disco</p></li>
+        <li><p>Add XML Schema.</p></li>
         <li><p>Typos and various fixes.</p></li>
       </ul>
     </remark>
@@ -236,6 +237,25 @@
 
 </section1>
 <section1 anchor="schema" topic="XML Schema">
+
+  <code><![CDATA[
+<?xml version='1.0' encoding='UTF-8'?>
+
+<xs:schema
+    xmlns:xs='http://www.w3.org/2001/XMLSchema'
+    targetNamespaces=']]>&eph0;<![CDATA['
+    xmlns=']]>&eph0;<![CDATA['
+    elementFormDefault='qualified'>
+
+  <xs:element name=']]>&EPHSTART;<![CDATA['>
+    <xs:complexType>
+      <xs:attribute type='xs:unsignedInt' name='timer' use='required'/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name=']]>&EPHEND;<![CDATA['/>
+</xs:schema>
+    ]]></code>
 
 <p>REQUIRED for protocol specifications.</p>
 
