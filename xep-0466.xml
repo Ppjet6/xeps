@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE xep SYSTEM 'xep.dtd' [
   <!ENTITY % ents SYSTEM 'xep.ent'>
-  <!ENTITY EPHEMERAL '&lt;ephemeral/&gt;'>
+  <!ENTITY EPHSTART '&lt;ephemeral/&gt;'>
+  <!ENTITY EPHEND '&lt;end/&gt;'>
   <!ENTITY eph0 'urn:xmpp:ephemeral:0'>
 %ents;
 ]>
@@ -32,6 +33,7 @@
     <initials>pep</initials>
     <remark>
       <ul>
+        <li><p>Change opt-out element name.</p></li>
         <li><p>Use a namespace instead of an element for disco</p></li>
         <li><p>Typos and various fixes in introduction.</p></li>
       </ul>
@@ -96,7 +98,7 @@
 
 <section2 anchor="sending" topic="Sending an ephemeral message">
 
-<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHEMERAL;</tt> tag in the <tt>&eph0;</tt> namespace, with an attribute <tt>timer</tt> (xs:unsignedInt) indicating the delay in seconds, after which a message MUST be discarded.</p>
+<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHSTART;</tt> tag in the <tt>&eph0;</tt> namespace, with an attribute <tt>timer</tt> (xs:unsignedInt) indicating the delay in seconds, after which a message MUST be discarded.</p>
 
 <p>Ephemeral messages SHOULD be sent as usual on the bare JID of the contact, or as is specified for groupchats (e.g., MUC, MIX). If this includes sending to non-supporting clients, and they can be detected, sending clients SHOULD warn the user in some way. Clients MAY warn users anyway if non-supporting clients cannot be detected (e.g., when they don’t get a directed presence).</p>
 
@@ -113,21 +115,21 @@
 
 <section2 anchor="implicit-negotiation" topic="Implicit timer negociation">
 
-<p>A implicit negociation can be done by sending a message with no <tt>&BODY;</tt>, that contains an <tt>&EPHEMERAL;</tt> tag and a timer attribute, specified in <link url='#sending'>Sending an ephemeral message</link>. The message MUST also contain a <tt>&lt;store&gt;</tt> hint as described in &xep0334; so that offline clients see it.</p>
+<p>A implicit negociation can be done by sending a message with no <tt>&BODY;</tt>, that contains an <tt>&EPHSTART;</tt> tag and a timer attribute, specified in <link url='#sending'>Sending an ephemeral message</link>. The message MUST also contain a <tt>&lt;store&gt;</tt> hint as described in &xep0334; so that offline clients see it.</p>
 
 </section2>
 <section2 anchor="opt-out" topic="Opting-out of ephemeral messages">
 
-<p><strong>XXX</strong>: Help. How do I ensure the receiving client sees what I am going to send, if it’s just a single message. Same issue as with negotiating the delay. (That is, if a client doesn’t fetch all MAM, it may miss the message). Do I need to send &lt;i-want-out/&gt; forever?</p>
+<p><strong>XXX</strong>: Help. How do I ensure the receiving client sees what I am going to send, if it’s just a single message. Same issue as with negotiating the delay. (That is, if a client doesn’t fetch all MAM, it may miss the message). Do I need to send <tt>&EPHEND;</tt> forever?</p>
 
 <p>A client that has previously been sending ephemeral messages can choose to stop sending them, and send regular messages instead, in which case it should tell the recipient:</p>
 
 <code><![CDATA[<message from='vladimir@example.com/mobile' to='管野@example.com' type='chat'>
     <body>おは</body>
-    <i-want-out/>
+    <end xmlns=']]>&eph0;<![CDATA[' />
 </message>]]></code>
 
-<p>When the recipients sees the (TODO) <tt>&lt;i-want-out/&gt;</tt> element, it will stop including <tt>&EPHEMERAL;</tt>. The original client seeing no ephemeral tag is being included SHOULD stop sending the opt-out element.</p>
+<p>When the recipients sees the <tt>&EPHEND;</tt> element, it will stop including <tt>&EPHSTART;</tt>. The original client seeing no ephemeral tag is being included SHOULD stop sending the <tt>&EPHEND;</tt> element.</p>
 
 <p><strong>TODO</strong>: Negociation within messages is wonky. If a client comes back online and this flag isn't in server archives anymore, it will send ephemeral messages again causing all devices to send them again. This might go on forever.</p>
 
