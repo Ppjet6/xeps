@@ -35,6 +35,7 @@
       <ul>
         <li><p>Change opt-out element name.</p></li>
         <li><p>Use a namespace instead of an element for disco</p></li>
+        <li><p>Replace xs:unsignedInt in text by unsigned 32bit integer to make it more explicit.</p></li>
         <li><p>Add XML Schema.</p></li>
         <li><p>Typos and various fixes.</p></li>
       </ul>
@@ -99,7 +100,7 @@
 
 <section2 anchor="sending" topic="Sending an ephemeral message">
 
-<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHSTART;</tt> tag in the <tt>&eph0;</tt> namespace, with a <tt>timer</tt> attribute indicating the delay in seconds (xs:unsignedInt), after which a message MUST be discarded.</p>
+<p>An ephemeral message is a <tt>&MESSAGE;</tt> including an <tt>&EPHSTART;</tt> tag in the <tt>&eph0;</tt> namespace, with a <tt>timer</tt> attribute indicating the delay in seconds (an unsigned 32 bit integer), after which a message MUST be discarded.</p>
 
 <p>Ephemeral messages SHOULD be sent as usual on the bare JID of the contact, or as is specified for groupchats (e.g., MUC, MIX). If this includes sending to non-supporting clients, and they can be detected, sending clients SHOULD warn the user in some way. Clients MAY warn users anyway if non-supporting clients cannot be detected (e.g., when they don’t get a directed presence).</p>
 
