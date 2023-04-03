@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE xep SYSTEM 'xep.dtd' [
+  <!ENTITY % ents SYSTEM 'xep.ent'>
+  <!ENTITY REFNS 'urn:xmpp:reference:1'>
+  <!ENTITY NS 'urn:xmpp:reference:mentions:0'>
+  <!ENTITY NSCHANNEL 'urn:xmpp:reference:mentions:0#channel'>
+  <!ENTITY NSASSOC 'urn:xmpp:reference:mentions:0#associations'>
+  <!ENTITY NSHATS 'urn:xmpp:reference:mentions:0#hats'>
+%ents;
+]>
+<?xml-stylesheet type='text/xsl' href='xep.xsl'?>
+<xep>
+<header>
+  <title>Mentions</title>
+  <abstract>This specification defines a way to mention users or groups of users.</abstract>
+  &LEGALNOTICE;
+  <number>xxxx</number>
+  <status>ProtoXEP</status>
+  <type>Standards Track</type>
+  <sig>Standards</sig>
+  <approver>Council</approver>
+  <dependencies>
+    <spec>XMPP Core</spec>
+    <spec>XEP-0001</spec>
+    <spec>XEP-0372</spec>
+    <spec>XEP-0421</spec>
+  </dependencies>
+  <supersedes/>
+  <supersededby/>
+  <shortname>NOT_YET_ASSIGNED</shortname>
+  <tags>
+    <tag>reference</tag>
+    <tag>mention</tag>
+  </tags>
+  &pep.;
+  <revision>
+    <version>0.0.1</version>
+    <date>2023-03-23</date>
+    <initials>pep</initials>
+    <remark><p>First draft.</p></remark>
+  </revision>
+</header>
+<section1 topic='Introduction' anchor='intro'>
+  <p>A common feature in online communication is ability to address a message to a specific user or a group of users, and have their clients notify them on the way. Mentions have been somewhat specified in a first revision of &xep0372;, and used in a few implementations, but they were missing the ability to mention pre-defined groups of users.</p>
+  <p>It was chosen to separate this document from &xep0372; to keep the original document short and generic.</p>
+</section1>
+<section1 topic='Requirements' anchor='reqs'>
+  <ul>
+    <li>Define various types of mentions and their semantics.</li>
+    <li>Allow combining mentions through modifiers.</li>
+  </ul>
+</section1>
+<section1 topic='Discovering Support' anchor='disco'>
+  <p>An entity implementing this specification MUST advertise <tt>&NS;</tt> as a &xep0030; feature. It SHOULD also advertize subsquent features declared in this document that it supports.</p>
+</section1>
+<section1 topic='Use Cases' anchor='usecases'>
+  <p>This &xep0372; type <tt>&NS;</tt> is defined to work with <tt>&REFNS;</tt>.</p>
+  <p>There may be as many references as there are users or groups of users to mention in a stanza.</p>
+  <p>Specific server support may be required to handle notifications to offline devices, commonly done via &xep0357;.</p>
+
+  <section2 topic='Modifiers' anchor='modifiers'>
+    <p>modifiers are a way to alter the behaviour of a mention. Below is the list of available modifiers, described in their own section.</p>
+
+    <table caption='Modifiers'>
+      <tr>
+        <th>Tag</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td><link url="#active">{&NS;}active</link></td>
+        <td>Only mention active users of the targeted group.</td>
+      </tr>
+    </table>
+
+    <section3 topic='Active' anchor='active'>
+      <p>The <tt>active</tt> modifier changes the mention to only include the set of active users in a defined group. Whether to notify the user is left to entities handling the mention, (e.g., a server deciding whether to send push notifications to the most active device of a user, a client reading a mention and deciding whether to notify the user depending on their online status).</p>
+      <p>The <tt>active</tt> modifiers MUST be in the <tt>&NS;</tt> namespace and placed as a child of the &xep0372; <tt>reference</tt> element.</p>
+    </section3>
+
+  </section2>
+
+  <section2 topic='Mentioning users' anchor='users'>
+    <p>An entity can mention a user by sending a &xep0372; element with the <tt>&NS;</tt> type, which MUST include a <tt>jid</tt> attribute filled with the JID of the user being mentioned, and MAY include an <tt>anchor</tt> attribute that takes a URI referring to the payload doing the original mentioning.</p>
+
+    <p>In a &xep0045; room, one can send a &xep0372; element with the <tt>&NS;</tt> type, and MUST include an <tt>occupantid</tt> attribute containing the &xep0421; identifier.</p>
+
+    <example caption='Mention someone in a room'><![CDATA[
+<message to='news@chat.commons.example' type='groupchat'>
+  <!-- Supposing the stanza has been sent on a stream with xml:lang='en' -->
+  <body>Hi Louise, how are you doing?</body>
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    begin='3'
+    end='8'
+    hreflang='en'
+    occupantid='ddfe47eabacabr2q1'/>
+  <body xml:lang='fr'>Salut Louise, ça va ?</body>
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    begin='7'
+    end='12'
+    hreflang='fr'
+    occupantid='ddfe47eabacabr2q1'/>
+</message>]]></example>
+
+<example caption='Mention someone from a gateway&apos;d article'><![CDATA[
+<message to='louise\40commons.example@ap.example' type='chat'>
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    jid='louise\40commons.example@ap.example'
+    anchor='xmpp:rosa\40commons.example@ap.example?;node=urn%3Axmpp%3Amicroblog%3A0&item=ddfe47eabacabr2q1'
+  />
+  <store xmlns="urn:xmpp:hints"/>
+  <!-- Possibly more elements not including <body/> -->
+  <!-- TODO: No @begin nor @end because there's no way to designate an element other than body yet. -->
+</message>]]></example>
+  </section2>
+
+  <section2 topic='Mentioning groups of people' anchor='groups'>
+    <p>Many legacy services offer the possibility to mention groups of users, for example mentioning all users of a room.</p>
+    <p>The following table lists types of mentions:</p>
+
+    <table caption='Groups'>
+      <tr>
+        <th>Reference type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>&NS;#channel</td>
+        <td>Mention all occupants of a room, including affiliated offline occupants, independant of their status.</td>
+      </tr>
+    </table>
+
+    <p>An entity implementing any of the available group mentions MUST also advertize same string as a &xep0030; feature.</p>
+
+    <example caption='Mentioning all active users of a channel'><![CDATA[
+<message to='news@chat.commons.example' type='groupchat'>
+  <body>Hey all!</body>
+  <reference xmlns='urn:xmpp:reference:1' type='urn:xmpp:reference:mention:1#channel'>
+    <active/>
+  </reference>
+</message>]]></example>
+  </section2>
+
+  <section2 topic='Mentioning roles or affiliations' anchor='associations'>
+    <p>It is possible to mention users with specific &xep0045; roles or affiliations. The reference type to use is defined in the table below.</p>
+
+    <table caption='Reference types'>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>&NS;#moderators</td>
+        <td>Occupants with a moderator role</td>
+      </tr>
+      <tr>
+        <td>&NS;#participants</td>
+        <td>Occupants with a participant role</td>
+      </tr>
+      <tr>
+        <td>&NS;#visitors</td>
+        <td>Occupants with a visitor role</td>
+      </tr>
+      <tr>
+        <td>&NS;#owner</td>
+        <td>Occupants with an owner affiliation</td>
+      </tr>
+      <tr>
+        <td>&NS;#admin</td>
+        <td>Occupants with an admin affiliation</td>
+      </tr>
+      <tr>
+        <td>&NS;#member</td>
+        <td>Occupants with a member affiliation</td>
+      </tr>
+      <tr>
+        <td>&NS;#none</td>
+        <td>Occupants with no affiliation</td>
+      </tr>
+    </table>
+
+    <p>An entity implementing this MUST advertize the <tt>&NSASSOC;</tt> &xep0030; feature.</p>
+
+    <example caption='Mention moderators in a room'><![CDATA[
+<message to='news@chat.commons.example' type='groupchat'>
+  <body>Any moderator to handle the spam above please?</body>
+  <reference xmlns='urn:xmpp:reference:1' type='urn:xmpp:reference:mention:1#moderators' />
+</message>]]></example>
+  </section2>
+
+  <section2 topic='Mentioning hats' anchor='hats'>
+    <p>To mention a &xep0317; hat, an entity MUST use the reference type <tt>&NSHATS;</tt> and the <tt>uri</tt> attribute filled with the hat URI.</p>
+
+    <p>An entity implementing this MUST advertize the <tt>&NSHATS;</tt> &xep0030; feature.</p>
+
+    <example caption='Mentioning all (hats) students in a room'><![CDATA[
+<message to='news@chat.commons.example' type='groupchat'>
+  <body>To all students, [..]</body>
+  <reference xmlns='urn:xmpp:reference:1'
+             type='urn:xmpp:reference:mention:1#hats'
+             uri='http://schemas.example.com/hats#students'/>
+</message>]]></example>
+  </section2>
+
+  <section2 topic='Begin and end attributes' anchor='beginend'>
+    <p>If a &xep0372; element of type <tt>&NS;</tt> or its subtypes contains both <tt>begin</tt> and <tt>end</tt> attributes, the receiving entity MAY use this as a hint that the specified range of the content is being addressed to the specified users. If the element doesn't contain these attributes, the mention doesn't refer to a specific part of the content, and implementations MAY check other parts of the payload to know what it refers to, (e.g., xhtml-im links).</p>
+    <p>Begin and end pairs in a message SHOULD not overlap, except in the case where they are all equal.</p>
+    <example caption='Mentioning members of a loosely defined group in a channel with many users'><![CDATA[
+<message to='news@chat.commons.example' type='groupchat'>
+  <body>Hi Spartacists!</body>
+  <!-- @begin and @end are equal throughout all references here -->
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    begin='3'
+    end='14'
+    occupantid='rosa@occupant-id'/>
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    begin='3'
+    end='14'
+    occupantid='clara@occupant-id'/>
+  <reference xmlns='urn:xmpp:reference:1'
+    type='urn:xmpp:reference:mention:1'
+    begin='3'
+    end='14'
+    occupantid='karl@occupant-id'/>
+</message>]]></example>
+  </section2>
+</section1>
+
+<section1 topic='Implementation Notes' anchor='impl'>
+  <p>This specification allows sending clients to convey the user's intent. It should also allow sending users to talk about someone without having to mention them.</p>
+  <p>&xep0421; is being used to mention in &xep0045; instead of a participant JID or a real JID. This allows us to have a common solution across MUC, and also to use a stable identifier, that is guaranteed to be unique per occupant (bare JID) and prevent usurpation.</p>
+  <p>As &xep0421; in MUC can point to multiple nicknames, it may be confusing for clients which would want to display something based on the nickname (colors, etc.). It also may be an issue for a service sending push notifications that need to device which devices to send to.</p>
+  <p>The use of the <tt>URI</tt> attribute of the original &xep0372; was overly generic for mentions that are meant to notify users of the network. Also, referring to (message, id) or (room, occupantid) tuples aren't possible yet. They may be specified later on.</p>
+  <p>Future developments could include mentions to <tt>all</tt>, or <tt>space</tt>, to respectively mention all users of an instance or a space.</p>
+</section1>
+<section1 topic='Accessibility Considerations' anchor='access'>
+  <p>This specification should eventually help receiving clients to remove their nickname matching regex that is bound to yield false positives and negatives results for the content they parse.</p>
+</section1>
+<section1 topic='Internationalization Considerations' anchor='i18n'>
+  <p>If an implementation sends a &xep0372; element of type <tt>&NS;</tt> or its subtypes which contains a valid <tt>hreflang</tt> attribute that refers to content with an <tt>xml:lang</tt> attribute, it SHOULD take care to send a mention for every languages it sends.</p>
+</section1>
+<section1 topic='Security Considerations' anchor='security'>
+  <p>Being able to notify groups of people at the same time may also be used by malicious entities.</p>
+  <p>Using &xep0421; instead of a regular participant JID in MUC prevents moderators possibly leaking JIDs they have access to that other occupants don't.</p>
+</section1>
+<section1 topic='IANA Considerations' anchor='iana'>
+  <p>REQUIRED.</p>
+</section1>
+<section1 topic='XMPP Registrar Considerations' anchor='registrar'>
+  <p>REQUIRED.</p>
+</section1>
+<section1 topic='XML Schema' anchor='schema'>
+  <p>Defined in 0392?</p>
+</section1>
+</xep>
