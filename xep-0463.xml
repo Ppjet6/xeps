@@ -27,6 +27,21 @@
   &pep.;
   &larma;
   <revision>
+    <version>0.1.1</version>
+    <date>2023-05-17</date>
+    <initials>pep</initials>
+    <remark>
+      <ul>
+        <li>Remove @role from affiliation update in example as it's not relevant.</li>
+        <li>Change @until and @since attribute values in example to keep a consistent scenario.</li>
+        <li>Add reasoning behind MUST on handling &MESSAGE; updates.</li>
+        <li>Add note on global-ness of version strings.</li>
+        <li>Update design note on pagination.</li>
+        <li>Update schema.</li>
+      </ul>
+    </remark>
+  </revision>
+  <revision>
     <version>0.1.0</version>
     <date>2022-03-08</date>
     <initials>XEP Editor (jsc)</initials>
@@ -141,9 +156,9 @@
          to='louise@commons.example/desktop'>
   <x xmlns=']]>&muc-user;<![CDATA['
      xmlns:mav=']]>&mav0;<![CDATA['
-     mav:since='9pacabr2q1'
-     mav:until='ruz41312vw'>
-    <item jid='peter@commons.example/mobile' affiliation='none' role='none'/>
+     mav:since='ruz41312vw'
+     mav:until='acu9e58abt'>
+    <item jid='peter@commons.example/mobile' affiliation='none'/>
   </x>
 </message>]]></example>
     </section3>
@@ -171,6 +186,10 @@
   <p>When caching server responses, a client should make sure to associate the received version string to the room JID and not have a global cache for affiliation versions to prevent any cache poisoning issues.</p>
 </section1>
 
+<section1 topic='Implementation Notes' anchor='impl'>
+  <p>Version strings do not need to be the same for all participants in the MUC, but it seems easier to implement if they are.</p>
+</section1>
+
 <section1 topic='IANA Considerations' anchor='iana'>
   <p>This document requires no interaction with the &IANA;.</p>
 </section1>
@@ -182,7 +201,8 @@
 <section1 topic='Design Considerations' anchor='design'>
   <p>This specification is based on the design of roster versioning, with the difference of since and until attributes, to ensure clients stay in sync because unlike roster versioning this may be running over c2s, <strong>and</strong> s2s which may break.</p>
   <p>The <tt>&lt;x xmlns='http://jabber.org/protocol/muc[#user]/&gt;</tt> elements are not defined extensible in the &xep0045; specification, but as this is a negociated change there shouldn't be any issue.</p>
-  <p><strong>TODO? RSM.</strong> Pagination may have been useful for large rooms, when receiving a full response. Versioning will reduce the amount of bandwidth used for further queries though.</p>
+  <p>Although versioning will reduce the amount of bandwidth used for further queries, pagination may have been useful for large rooms when receiving a full response. It may be complex to handle with RSM when the stanza used isn't a query. A future document may introduce some other mechanism to fill this gap.</p>
+  <p>The introduction of a MUST on &MESSAGE; updates is necessary to ensure an observer (joined in the room) sees affiliation updates for offline users too, as these don't have any presence and thus their affiliation change wouldn't be broadcasted otherwise.</p>
 </section1>
 <section1 topic='XML Schema' anchor='schema'>
   <code><![CDATA[<?xml version='1.0' encoding='UTF-8'?>
@@ -191,17 +211,18 @@
   xmlns:xs='http://www.w3.org/2001/XMLSchema'
   targetNamespace='urn:xmpp:muc:affiliations:0'
   xmlns='urn:xmpp:muc:affiliations:0'
-  elementFormDefault='qualified'>
+  elementFormDefault='qualified'
+  attributeFormDefault='qualified'>
 
   <xs:annotations>
     <xs:documentation>
       The protocol documented by this schema is defined
-      in XEP-xxxx: https://xmpp.org/extensions/xep-xxxx.html.
+      in XEP-0463: https://xmpp.org/extensions/xep-0463.html.
     </xs:documentation>
   </xs:annotations>
 
-  <!-- TODO: How do I schematize standalone attributes? -->
-  </xs:element>
+  <xs:attribute name="since" type="xs:string"/>
+  <xs:attribute name="until" type="xs:string"/>
 </xs:schema>]]></code>
 </section1>
 <section1 topic='Acknowledgements' anchor='registrar'>
